@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
+# C://Users//Kostya//Desktop//ITMO//ITMO_4sem//VichMath//file.txt
 
 def drow_graph(func, min_x, max_x, min_y, max_y, step):
     x = np.linspace(min_x, max_x, 10000)
@@ -63,12 +63,10 @@ def method_secushchih(func, a, b, acc):
         x_prev = b - 0.001
 
     x_current = x_prev * 1000 + 10
-    print(x_prev)
     x_prev = b
     iterations = 0
 
     # Поиск корней, отлавливаем условие остановки
-    # while (abs(x_current - x_prev_prev) > error):
     while (abs((func(x_prev))) > acc):
         x_current = x_prev - ((x_prev - x_prev_prev) / (func(x_prev) - func(x_prev_prev))) * func(x_prev)
         x_prev_prev = x_prev
@@ -139,7 +137,6 @@ def method_iterations(func, a, b, acc):
 
         x_prev = x_current
         x_current = x_prev + lyambd * func(x_prev)
-        # print(x_current, x_prev, func(x_current))
         iterations += 1
         if (iterations > 1000):
             print("Алгоритм расходится")
@@ -148,6 +145,7 @@ def method_iterations(func, a, b, acc):
     return x_current, iterations
 
 
+# Для системы
 # Частная производная по х
 def find_dx(function, x, y, h=0.00000001):
     return (function(x + h, y) - function(x - h, y)) / (2 * h)
@@ -163,7 +161,7 @@ def opred(function1, function2, x, y):
     return find_dx(function1, x, y) * find_dy(function2, x, y) - find_dx(function2, x, y) * find_dy(function1, x, y)
 
 
-def system(num_first_function, num_second_function, start_x, start_y, acc):
+def system_Nuthon(num_first_function, num_second_function, start_x, start_y, acc):
     x_current = start_x
     y_current = start_y
     y_prev = y_current * 1000 + 10
@@ -195,9 +193,9 @@ while command != 1 and command != 2:
 if (command == 1):
     # Выбор уравнения
     print("Выберите уравнение из списка:")
-    print("1 : x^3 + 2.28x^2 - 1.934x - 3.907")
-    print("2 : x^2 - 3x - 2")
-    print("3 : sin(x) - cos(x) + 0.2x")
+    print("1 : 2,3*x^3 + 5,75*x^2 − 7,41*x − 10,6")
+    print("2 : 2*x^2 - 5 * x - 4")
+    print("3 : sin(x) - cos(x) + 0.2*x")
 
     num_func = -1
     while num_func != 1 and num_func != 2 and num_func != 3:
@@ -208,50 +206,90 @@ if (command == 1):
             print("Вы должны выбрать номер функции и ввести число")
 
     if (num_func == 1):
-        func = lambda x: x ** 3 + 2.28 * x ** 2 - 1.934 * x - 3.907
+        func = lambda x: 2.3*x**3 + 5.75*x**2 - 7.41*x - 10.6
     elif (num_func == 2):
-        func = lambda x: x ** 2 - 3 * x - 2
+        func = lambda x: 2*x ** 2 - 5 * x - 4
     else:
-        func = lambda x: np.sin(x) - np.cos(x) + 0.2 * x
+        func = lambda x: np.sin(x) - np.cos(x) + 0.2*x
 
-    # Выбор способа выбора данных
-    interval_command = 0
-    while interval_command != 1 and interval_command != 2:
+    # Выбор места чтения
+    place_read_command = 0
+    while place_read_command != 1 and place_read_command != 2:
         try:
-            interval_command = int(
-                input("Введите 1, чтобы ввести интервал. Введите 2, чтобы дать программе самой найти интервалы: "))
+            place_read_command = int(
+                input("Введите 1, чтобы ввести данные с клавиатуры. Введите 2, чтобы прочитать данные из файла: "))
         except ValueError:
             print("Вы должны ввести 1 или 2")
 
-    if (interval_command == 1):
-        a, b = input_interval(func)
-    else:
-        corrrect = False
 
-        for i in np.arange(-100, 100, 0.5):
-            if (func(i) * func(i - 0.5) < 0):
-                print("Найден интервал: [" + str(i - 0.5) + ", " + str(i) + "]")
-                a = i - 0.5
-                b = i
-                corrrect = True
-                break
+    if(place_read_command==1):
+        # Выбор способа выбора данных
+        interval_command = 0
+        while interval_command != 1 and interval_command != 2:
+            try:
+                interval_command = int(
+                    input("Введите 1, чтобы ввести интервал. Введите 2, чтобы дать программе самой найти интервалы: "))
+            except ValueError:
+                print("Вы должны ввести 1 или 2")
 
-        if (corrrect == False):
-            print("Интервал не найден")
+        if (interval_command == 1):
             a, b = input_interval(func)
+        else:
+            corrrect = False
 
-    #   Ввод точности
-    accuracy = 0
-    correct = False
-    while correct == False:
-        try:
-            accuracy = float(input("Введите точность: "))
-            if accuracy > 0:
-                correct = True
-            else:
-                print("Число должно быть положительным")
-        except ValueError:
-            print("Введите число")
+            for i in np.arange(-100, 100, 0.5):
+                if (func(i) * func(i - 0.5) < 0):
+                    print("Найден интервал: [" + str(i - 0.5) + ", " + str(i) + "]")
+                    a = i - 0.5
+                    b = i
+                    corrrect = True
+                    break
+
+            if (corrrect == False):
+                print("Интервал не найден")
+                a, b = input_interval(func)
+
+        #   Ввод точности
+        accuracy = 0
+        correct = False
+        while correct == False:
+            try:
+                accuracy = float(input("Введите точность: "))
+                if accuracy > 0:
+                    correct = True
+                else:
+                    print("Число должно быть положительным")
+            except ValueError:
+                print("Введите число")
+    else:
+        correct=False
+        while correct==False:
+            file=str(input("Введите путь к файлу:"))
+            with open(file, mode="rt") as fd:
+                try:
+                    a_str=fd.readline()
+                    a_str = a_str.replace(",", ".")
+                    a=float(a_str)
+                    b_str=fd.readline()
+                    b_str=b_str.replace(",", ".")
+                    b=float(b_str)
+                    accuracy=float(fd.readline())
+                    if accuracy > 0:
+                        correct = True
+                    else:
+                        print("Число должно быть положительным")
+                        raise ArithmeticError
+                    if a > b:
+                        a, b = b, a
+                    elif a == b:
+                        raise ArithmeticError
+                    elif func(a) * func(b) >= 0:
+                        raise AttributeError
+                    correct = True
+                except ValueError:
+                    print("Неверные данные в файле")
+                except ArithmeticError:
+                    print("Повторите попытку")
 
     # Выбор метода
     method = 0
@@ -319,4 +357,6 @@ else:
         except ValueError:
             print("Введите число")
 
-    x, y, err_x, err_y, it = system(num_first_function,num_second_function, start_x, start_y,accuracy)
+    x, y, acc_x, acc_y, count_iteration = system_Nuthon(num_first_function,num_second_function, start_x, start_y,accuracy)
+
+    print("x = " + str(x) + ", y = " + str(y) + ", найден за " + str(count_iteration) + " итераций, вектор погрешностей: [" + str(acc_x) + ", " + str(acc_y) + "]")
